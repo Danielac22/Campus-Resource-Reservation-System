@@ -110,7 +110,7 @@ bool ReservationManager::createReservation(const Reservation& r) {
     return true;
 }
 
-}
+
 
 // Cancel reservation
 bool ReservationManager::cancelReservation(int reservationID) {
@@ -152,9 +152,13 @@ bool ReservationManager::restoreLastCancelled() {
     }
 
     Reservation r = cancelledStack.top();
-    cancelledStack.pop();
 
-    return createReservation(r);
+    if (createReservation(r)) {
+        cancelledStack.pop();
+        return true;
+    }
+
+    return false;
 }
 
 
