@@ -11,7 +11,7 @@ private:
     int reservationID;
     int studentID;
     int resourceID;
-    string studentName:
+    string studentName;
     string reservationDate; // mm/dd/yyyy
 
 public:
