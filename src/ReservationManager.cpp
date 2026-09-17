@@ -5,72 +5,146 @@
 
 using namespace std;
 
-// Load reservations from file
+//Construct.
+ReservationManager::ReservationManager() {
+    head = nullptr;
+}
+
+// Reservations from file.
 void ReservationManager::loadReservations(const string& filename) {
+
     ifstream file(filename);
-    if (!file.is_open()) return;
+
+    if (!file.is_open()) {
+        cout << "Could not open reservation file." << endl;
+        return;
+    }
 
     string line;
+
     while (getline(file, line)) {
+
         stringstream ss(line);
 
-        int resID, stuID, resrcID;
-        string stuName, date;
+        int resID;
+        int stuID;
+        int resrcID;
 
-        getline(ss, line, ',');
-        resID = stoi(line);
+        string stuName;
+        string date;
+        string value;
 
-        getline(ss, line, ',');
-        stuID = stoi(line);
+        getline(ss, value, ',');
+        resID = stoi(value);
+
+        getline(ss, value, ',');
+        stuID = stoi(value);
 
         getline(ss, stuName, ',');
 
-        getline(ss, line, ',');
-        resrcID = stoi(line);
+        getline(ss, value, ',');
+        resrcID = stoi(value);
 
         getline(ss, date);
 
-        activeReservations.emplace_back(resID, stuID, stuName, resrcID, date);
+        Reservation r(resID, stuID, stuName, resrcID, date);
+
+        createReservation(r);
     }
+
+    file.close();
 }
 
-// Save active reservations
+// Save active reservations to file.
 void ReservationManager::saveReservations(const string& filename) const {
     ofstream file(filename);
-    for (const auto& r : activeReservations) {
-        file << r.toCSV() << "\n";
+     if (!file.is_open()) {
+        cout << "Couldn't open the reservation file." << endl;
+        return;
     }
+
+    Node* current = head;
+
+    while (current != nullptr) {
+
+        file << current->reservation.getReservationID() << ","
+              << current->reservation.getStudentID() << ","
+              << current->reservation.getStudentName() << ","
+              << current->reservation.getResourceID() << ","
+              << current->reservation.getReservationDate()
+              << endl;
+        current = current->next;
+    }
+
+    file.close();
 }
 
-// Create reservation
+
+// Create reservation into list.
 bool ReservationManager::createReservation(const Reservation& r) {
     if (reservationExists(r.getReservationID())) {
         cout << "Reservation ID already exists.\n";
         return false;
     }
 
-    activeReservations.push_back(r);
+    // Create new node
+    Node* newNode = new Node(r);
+
+    // If the list is empty
+    if (head == nullptr) {
+        head = newNode;
+    }
+
+    // Otherwise insert at the end
+    else {
+
+        Node* current = head;
+
+        while (current->next != nullptr) {
+            current = current->next;
+        }
+
+        current->next = newNode;
+    }
+
     return true;
+}
+
 }
 
 // Cancel reservation
 bool ReservationManager::cancelReservation(int reservationID) {
-    for (size_t i = 0; i < activeReservations.size(); ++i) {
-        if (activeReservations[i].getReservationID() == reservationID) {
+    Node* current = head;
+    Node* previous = nullptr;
 
-            // Push to cancellation stack
-            cancelledStack.push(activeReservations[i]);
+    while (current != nullptr) {
+        if (current->reservation.getReservationID() == reservationID) {
+            // Store cancelled reservation in stack.
+            cancelledStack.push(current->reservation);
 
-            // Remove from active list
-            activeReservations.erase(activeReservations.begin() + i);
+            // Removing the first node.
+            if (previous == nullptr) {
+                head = current->next;
+            }
+
+            // Removing node.
+            else {
+                previous->next = current->next;
+            }
+
+            delete current;
 
             return true;
         }
+        previous = current;
+        current = current->next;
     }
+
     return false;
 }
 
-// Restore most recently cancelled
+
+// Restore most recently cancelled.
 bool ReservationManager::restoreLastCancelled() {
     if (cancelledStack.empty()) {
         cout << "No cancelled reservations to restore.\n";
@@ -80,44 +154,93 @@ bool ReservationManager::restoreLastCancelled() {
     Reservation r = cancelledStack.top();
     cancelledStack.pop();
 
-    activeReservations.push_back(r);
-    return true;
+    return createReservation(r);
 }
 
 
-// Display active reservations
+// Display the reservations.
 void ReservationManager::displayActiveReservations() const {
-    cout << "\nActive Reservations:\n";
-    for (const auto& r : activeReservations) {
-        cout << r.toCSV() << "\n";
+
+    cout << "\n--- Active Reservations ---\n";
+
+    if (head == nullptr) {
+        cout << "No active reservations.\n";
+        return;
+    }
+
+    Node* current = head;
+
+    while (current != nullptr) {
+
+        cout << "Reservation ID: " << current->reservation.getReservationID() << endl;
+        cout << "Student ID: " << current->reservation.getStudentID() << endl;
+        cout << "Student Name: " << current->reservation.getStudentName() << endl;
+        cout << "Resource ID: " << current->reservation.getResourceID() << endl;
+        cout << "Reservation Date: " << current->reservation.getReservationDate() << endl;
+        cout << "---------------------------\n";
+
+        // Move to next.
+        current = current->next;
     }
 }
 
-// Display cancellation history
+
+// Cancellation history.
 void ReservationManager::displayCancellationHistory() const {
     stack<Reservation> temp = cancelledStack;
 
-    cout << "\nCancellation History (most recent first):\n";
+    cout << "\n--- Cancellation History ---\n";
+
+    if (temp.empty()) {
+        cout << "No cancellation history.\n";
+        return;
+    }
+
     while (!temp.empty()) {
-        cout << temp.top().toCSV() << "\n";
+
+        Reservation r = temp.top();
+
+        cout << "Reservation ID: " << r.getReservationID() << endl;
+        cout << "Student ID: " << r.getStudentID() << endl;
+        cout << "Student Name: " << r.getStudentName() << endl;
+        cout << "Resource ID: " << r.getResourceID() << endl;
+        cout << "Reservation Date: " << r.getReservationDate() << endl;
+        cout << "---------------------------\n";
+
         temp.pop();
     }
 }
 
-// Search by reservation ID
+
+// Reservation by ID.
 Reservation* ReservationManager::findReservation(int reservationID) {
-    for (auto& r : activeReservations) {
-        if (r.getReservationID() == reservationID)
-            return &r;
+
+    Node* current = head;
+
+    while (current != nullptr) {
+        if (current->reservation.getReservationID() == reservationID) {
+            return &(current->reservation);
+        }
+
+        current = current->next;
     }
+
     return nullptr;
 }
 
-// Helper: check if reservation exists
+
+// Check if reservation already exists.
 bool ReservationManager::reservationExists(int reservationID) const {
-    for (const auto& r : activeReservations) {
-        if (r.getReservationID() == reservationID)
+
+    Node* current = head;
+
+    while (current != nullptr) {
+        if (current->reservation.getReservationID() == reservationID) {
             return true;
+        }
+
+        current = current->next;
     }
+
     return false;
 }
