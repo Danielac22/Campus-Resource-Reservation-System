@@ -2,7 +2,6 @@
 #define RESOURCE_MANAGER_H
 
 #include "Resource.h"
-#include <vector>
 #include <string>
 
 using namespace std;
@@ -11,9 +10,19 @@ using namespace std;
 
 class ResourceManager {
 private:
-    vector<Resource> resources;
-    
+    struct Node{
+    Resource resources;
+    Node* next;
+
+    Node(const Resource& r) : resources(r), next (nullptr) {}
+};
+
+    Node* head;
+
 public:
+    ResourceManager();
+    ~ResourceManager();
+
     void loadResources( string filename);
     void displayResources();
     void displayAvailability();
