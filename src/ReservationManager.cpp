@@ -34,15 +34,15 @@ void ReservationManager::loadReservations(const string& filename) {
         string date;
         string value;
 
-        getline(ss, value, ',');
+        getline(ss, value, '|');
         resID = stoi(value);
 
-        getline(ss, value, ',');
+        getline(ss, value, '|');
         stuID = stoi(value);
 
-        getline(ss, stuName, ',');
+        getline(ss, stuName, '|');
 
-        getline(ss, value, ',');
+        getline(ss, value, '|');
         resrcID = stoi(value);
 
         getline(ss, date);
@@ -67,10 +67,10 @@ void ReservationManager::saveReservations(const string& filename) const {
 
     while (current != nullptr) {
 
-        file << current->reservation.getReservationID() << ","
-              << current->reservation.getStudentID() << ","
-              << current->reservation.getStudentName() << ","
-              << current->reservation.getResourceID() << ","
+        file << current->reservation.getReservationID() << "|"
+              << current->reservation.getStudentID() << "|"
+              << current->reservation.getStudentName() << "|"
+              << current->reservation.getResourceID() << "|"
               << current->reservation.getReservationDate()
               << endl;
         current = current->next;
