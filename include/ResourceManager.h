@@ -2,28 +2,18 @@
 #define RESOURCE_MANAGER_H
 
 #include "Resource.h"
+#include <vector>
 #include <string>
 
 using namespace std;
 
 // Manages the campus resource inventory
-
 class ResourceManager {
 private:
-    struct Node{
-    Resource resources;
-    Node* next;
-
-    Node(const Resource& r) : resources(r), next (nullptr) {}
-};
-
-    Node* head;
+    vector<Resource> resources;
 
 public:
-    ResourceManager();
-    ~ResourceManager();
-
-    void loadResources( string filename);
+    void loadResources(string filename);
     void displayResources();
     void displayAvailability();
 };
