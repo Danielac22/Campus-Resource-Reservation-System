@@ -36,14 +36,14 @@ int main() {
         switch (choice) {
 
             case 1:
-                // FIXED: Resources belong to ResourceManager,
+                // Resources belong to ResourceManager,
                 // not ReservationManager.
                 resource.displayResources();
                 break;
 
 
             case 2: {
-                // FIXED: createReservation() needs a Reservation object.
+                // createReservation() needs a Reservation object.
                 int reservationID;
                 int studentID;
                 string studentName;
@@ -87,7 +87,7 @@ int main() {
 
 
             case 3: {
-                // FIXED: cancelReservation() needs a reservation ID.
+                //  cancelReservation() needs a reservation ID.
                 int reservationID;
 
                 cout << "Enter Reservation ID to cancel: ";
@@ -105,7 +105,7 @@ int main() {
 
 
             case 4:
-                // FIXED: Waiting list belongs to WaitingList,
+                //  Waiting list belongs to WaitingList,
                 // not ReservationManager.
                 waitingList.displayWaitingList();
                 break;
@@ -122,7 +122,7 @@ int main() {
 
 
             case 6: {
-                // FIXED: findReservation() needs a reservation ID.
+                //  findReservation() needs a reservation ID.
                 int reservationID;
 
                 cout << "Enter Reservation ID to search: ";
