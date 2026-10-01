@@ -153,7 +153,8 @@ int main() {
 
 
             case 7:
-                cout << "Sort Resources not implemented yet." << endl;
+                resource.sortResourcesByName();
+                resource.displayResources();
                 break;
 
 
