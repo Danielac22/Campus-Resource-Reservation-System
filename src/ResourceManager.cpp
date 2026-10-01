@@ -16,15 +16,16 @@ void ResourceManager::loadResources(string filename) {
     string id;
     string name;
     string type;
-    int status;
+    string status;
 
     while (getline(file, id, '|') &&
            getline(file, name, '|') &&
            getline(file, type, '|') &&
-           file >> status) {
+           getline(file, status)) {
 
-        file.ignore();
-        resources.push_back(Resource(id, name, type, status == 1));
+        resources.push_back(
+            Resource(id, name, type, status == "Available")
+        );
     }
 
     file.close();
