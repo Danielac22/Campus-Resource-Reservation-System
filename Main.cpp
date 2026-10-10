@@ -1,6 +1,8 @@
 #include <iostream>
+#include <algorithm>
 #include "ReservationManager.h"
 #include "Resource.h"
+#include "ResourceManager.h"
 #include "WaitingList.h"
 #include <iomanip>
 
@@ -41,7 +43,7 @@ int main () {
             resource.displayResources();
             break;
 
-        case 2:
+        case 2: {
            // createReservation() needs a Reservation object.
                 int reservationID;
                 int studentID;
@@ -82,6 +84,7 @@ int main () {
                 }
 
             break;
+        }
 
         case 3: {
            //  cancelReservation() needs a reservation ID.
@@ -99,24 +102,38 @@ int main () {
             break;
         }
 
-        case 4:
+        case 4: {
+            string resourceID;
             string studentID;
 
-                cout << "Enter Student ID: ";
-                cin >> studentID;
+            cout << "Enter Resource ID: ";
+            cin >> resourceID;
 
-                waitingList.addStudent(studentID);
+            cout << "Enter Student ID: ";
+            cin >> studentID;
 
-                cout << "Student added to waiting list." << endl;
+            waitingList.addStudent(resourceID, studentID);
+
+            cout << "Student added to waiting list." << endl;
             break;
+        } 
+        
 
-        case 5:
-              waitingList.removeStudent();
+        case 5: {
+            string resourceID;
+
+            cout << "Enter Resource ID: ";
+            cin >> resourceID;
+
+            waitingList.removeStudent(resourceID);
+
             break;
+        }
 
-        case 6:
+        case 6: {
              waitingList.displayWaitingList();
             break;
+        }
 
         case 7:
          if (reservation.restoreLastCancelled()){
@@ -127,14 +144,14 @@ int main () {
                 }
           break;
 
-        case 8: //possible changes here
+        case 8: {
             int reservationID;
 
                 cout << "Enter Reservation ID to search: ";
                 cin >> reservationID;
 
                 Reservation* found =
-                    reservation.findReservation(reservationID);
+                    reservation.linearSearch(reservationID);
 
                 if (found != nullptr) {
                     cout << "\n--- Reservation Found ---" << endl;
@@ -152,14 +169,15 @@ int main () {
                 else {
                     cout << "Reservation not found." << endl;
                 }
-            break; 
+            break;
+        }
 
         case 9:
            resource.sortResourcesByName(); // possible changes here
                 resource.displayResources();
             break;  
 
-        case 10: 
+        case 10: {
             cout << "======== Sytem Report ==========" << endl;
 
             // Active Reservations
@@ -202,7 +220,9 @@ int main () {
                 cout << "Resource ID: " << w.first
                     << " | Students Waiting: " << w.second << endl;
             }
-                break;
+            break;
+        } 
+        
 
         case 11: 
                 reservation.saveReservations("data/reservations.txt");
